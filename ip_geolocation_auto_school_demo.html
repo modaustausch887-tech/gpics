@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+  <title>GPS Location Project</title>
+</head>
+<body>
+  <h2>GPS Location Test</h2>
+
+  <p>
+    This page automatically requests your location and, if access
+    is allowed, emails your coordinates to the project owner.
+  </p>
+
+  <p id="status" role="status" aria-live="polite">
+    Starting...
+  </p>
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@5/dist/email.min.js"></script>
+
+  <script>
+    const SERVICE_ID = "service_nevhztv";
+    const TEMPLATE_ID = "template_m65bwxl";
+    const PUBLIC_KEY = "6RyR4vDWlpZ3sqFdf";
+
+    const statusElement = document.getElementById("status");
+
+    async function sendLocation() {
+      if (!window.isSecureContext) {
+        statusElement.textContent =
+          "Location access requires HTTPS or localhost.";
+        return;
+      }
+
+      if (!navigator.geolocation) {
+        statusElement.textContent =
+          "Geolocation is not supported.";
+        return;
+      }
+
+      if (!window.emailjs) {
+        statusElement.textContent =
+          "Email service failed to load.";
+        return;
+      }
+
+      statusElement.textContent = "Requesting location permission...";
+
+      try {
+        const position = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(
+            resolve,
+            reject,
+            {
+              enableHighAccuracy: true,
+              timeout: 20000,
+              maximumAge: 0
+            }
+          );
+        });
+
+        const { latitude, longitude, accuracy } = position.coords;
+
+        const message = `
+GPS LOCATION REPORT
+
+Latitude: ${latitude}
+Longitude: ${longitude}
+Accuracy: ${Math.round(accuracy)} meters
+
+Google Maps:
+https://www.google.com/maps?q=${latitude},${longitude}
+
+Date: ${new Date().toLocaleString()}
+        `.trim();
+
+        statusElement.textContent = "Sending location email...";
+
+        await window.emailjs.send(
+          SERVICE_ID,
+          TEMPLATE_ID,
+          { message },
+          { publicKey: PUBLIC_KEY }
+        );
+
+        statusElement.textContent =
+          "Location successfully emailed!";
+      } catch (error) {
+        console.error(error);
+
+        statusElement.textContent =
+          "Error: " +
+          (error?.message || error?.text ||
+            "Unable to retrieve or email your location.");
+      }
+    }
+
+    // Run automatically once the HTML has loaded.
+    document.addEventListener("DOMContentLoaded", sendLocation, {
+      once: true
+    });
+  </script>
+</body>
+</html>

